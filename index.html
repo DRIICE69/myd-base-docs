@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Moderne</title>
+    <link rel="stylesheet" href="jhttps://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+            --user1-color: #6c5ce7;
+            --user2-color: #00cec9;
+            --message-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100vh;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .chat-header-actions i {
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .chat-header-actions i:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
+                              url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiNlNWU1ZTUiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=');
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .message-user1 {
+            align-self: flex-start;
+        }
+
+        .message-user2 {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 10px;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: var(--message-radius);
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-user1 .message-content {
+            background-color: white;
+            color: var(--dark-color);
+            border-top-left-radius: 5px;
+        }
+
+        .message-user2 .message-content {
+            background-color: var(--user2-color);
+            color: white;
+            border-top-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #95a5a6;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .message-user2 .message-time {
+            justify-content: flex-end;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message-time i {
+            margin-left: 5px;
+            font-size: 10px;
+        }
+
+        .message-status {
+            position: absolute;
+            bottom: -10px;
+            font-size: 10px;
+            color: #95a5a6;
+        }
+
+        .message-user1 .message-status {
+            left: 50px;
+        }
+
+        .message-user2 .message-status {
+            right: 50px;
+            color: var(--user2-color);
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #eee;
+            align-items: center;
+        }
+
+        .chat-input i {
+            font-size: 20px;
+            color: var(--dark-color);
+            margin: 0 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .chat-input i:hover {
+            color: var(--primary-color);
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 30px;
+            background-color: #f5f6fa;
+            font-size: 14px;
+            outline: none;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input input:focus {
+            background-color: #e8e8e8;
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #5649d1;
+            transform: scale(1.05);
+        }
+
+        .typing-indicator {
+            display: flex;
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: var(--message-radius);
+            margin-bottom: 15px;
+            align-self: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            max-width: 80%;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #bdc3c7;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        /* Animation for new messages */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+ <script>eruda.init();</script>
+
+
+<script type="text/javascript" src="https://myd-base.com/dbs_console/scripts/javascripts/mydbase.js" defer></script>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile">
+                <div>
+                    <h3>Sophie Martin</h3>
+                    <p style="font-size: 12px; opacity: 0.8;">En ligne</p>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <i class="fas fa-phone-alt"></i>
+                <i class="fas fa-video"></i>
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+
+        <div class="chat-messages">
+            <!-- Messages will go here -->
+
+
+        
+
+
+
+
+
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <i class="far fa-smile"></i>
+            <i class="fas fa-paperclip"></i>
+            <input type="text" placeholder="Écrivez un message..." id="content">
+            <button id="send" class="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    
+    let SendBTN = document.getElementById("send")
+    let newMsg = document.getElementById("content")
+    let us = "";
+    let recv = "";
+    const chatMessages = document.querySelector('.chat-messages');
+    
+
+    window.addEventListener("DOMContentLoaded", function () {
+
+//recuperer le chemain actuel
+let current = window.location.href;
+if (current.includes("?")) {
+let arr = current.split("?")
+recv = arr[1];
+
+console.log(recv)
+}else{
+alert("destVide");
+return;
+}
+if(recv.trim() === "DRIICE"){
+us = "DRX"
+}
+if(recv.trim() === "DRX"){
+us = "DRIICE"
+}
+        let db = new MYDBASE();
+        
+        //Connexion
+        db.start("niceone_messagerie",
+        location.href,"MYD-6927C045C8D4844D2FFA7CA6EB98CEBA0532FDD6")
+        .then(connexion => {
+        
+        if (connexion) {
+        console.log("comn")
+        //Selection
+        db.find("messgestbl  ",
+        {
+        //Tout
+        chatter : 'DRIICE-DRX',
+        
+        },
+        )
+        .then(result => {
+        
+        if (db.nums_row() > 0) {
+        
+        while (db.assoc()) {
+        let m = db.assoc_result();
+        if (m["sender"]) {
+        let user = m["sender"]
+        let msgC = m["content"]
+        if(user === us.trim()){
+        let msg = `
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="message-avatar">
+        <div class="message-content">
+        ${msgC}
+        <div class="message-time">
+        ${new Date().getHours()}:${new Date().getMinutes()} <i class="fas fa-check-double"></i>
+        </div>
+        </div>
+        `;
+        
+        let newMessage = document.createElement('div');
+        newMessage.className = 'message message-user2';
+        newMessage.innerHTML = msg
+        chatMessages.appendChild(newMessage);
+        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        //console.log(msg);
+        }else{
+        
+        let msg = `
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="message-avatar">
+        <div class="message-content">
+        ${msgC}
+        <div class="message-time">
+        ${new Date().getHours()}:${new Date().getMinutes()} <i class="fas fa-check-double"></i>
+        </div>
+        </div>
+        `;
+        
+        let newMessage = document.createElement('div');
+        newMessage.className = 'message message-user1';
+        newMessage.innerHTML = msg
+        chatMessages.appendChild(newMessage);
+        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+         }
+        
+        }
+        }
+        
+        
+        }else{
+        console.log(db.error());
+        }
+        })
+        .catch(error => {
+        document.body.innerHTML = error;
+        console.log(error);
+        });
+        
+        }else{
+        
+        console.log(db.error());
+        }
+        })
+        
+       
+       function SendMsg(MsgContent,sendER,receV){
+      
+       //Connexion
+       db.start("niceone_messagerie",
+       location.href,"MYD-6927C045C8D4844D2FFA7CA6EB98CEBA0532FDD6")
+       .then(connexion => {
+       
+       if (connexion) {
+       console.log("connect")
+       //Insertion
+       db.insert("messgestbl",
+       {
+       chatter : "DRIICE-DRX",
+       sender:sendER,
+       receiver: receV,
+       content : MsgContent,
+       }
+       )
+       .then(result =>{
+       if (db.execute()) {
+       console.log(db.insert_ID())
+       location.reload()
+       }else{
+       console.log(db.error())
+       }
+       })
+       .catch(e=>{
+       console.log(e)
+       })
+       
+       }else{
+       console.log(db.error())}
+       }
+       ).catch(e =>{
+       console.log(e)
+       })
+       }
+       
+       
+       SendBTN.addEventListener("click",function(){
+       SendMsg(newMsg.value,us,recv);
+       }
+       )
+       
+       })
+        
+        
+       
+    </script>
+</body>
+</html>
