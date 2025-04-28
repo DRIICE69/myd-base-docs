@@ -22,9 +22,9 @@
             try {
                 const response = await fetch('https://myd-base.com/noname', {
                     method: method,
-                   // headers: {
-                       // 'Accept': //'text/plain'
-                   // }
+                    headers: {
+                        'Accept': 'text/plain'
+                    }
                 });
                 
                 if (!response.ok) {
