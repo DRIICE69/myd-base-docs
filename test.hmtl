@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API DRIICE</title>
+</head>
+<body>
+    <h1>Test API DRIICE</h1>
+    
+    <button onclick="fetchData('GET')">GET Request</button>
+    <button onclick="fetchData('POST')">POST Request</button>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        async function fetchData(method) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = "Chargement...";
+            
+            try {
+                const response = await fetch('https://myd-base.com/noname', {
+                    method: method,
+                    headers: {
+                        'Accept': 'text/plain'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                
+                const data = await response.text();
+                resultDiv.textContent = `Réponse (${method}): ${data}`;
+            } catch (error) {
+                resultDiv.textContent = `Erreur: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
